@@ -1,0 +1,44 @@
+import csv
+
+import mysql.connector
+
+db = mysql.connector.connect(
+    host="localhost",
+    user="admin",
+    passwd="admin",
+    database="szoftveres"
+
+)
+mycursor = db.cursor()
+
+mycursor.execute("drop table if exists hallgatok")
+
+"""EducationSector,"IndividualProject","Age","Gender","City","Influenced","Perseverance","DesireToTakeInitiative","Competitiveness","SelfReliance","StrongNeedToAchieve","SelfConfidence","GoodPhysicalHealth","MentalDisorder","KeyTraits","ReasonsForLack","y"""
+"""Engineering Sciences,"No",19,"Male","Yes","No",2,2,3,3,2,2,3,"Yes","Passion","","1"""
+
+mycursor.execute("CREATE TABLE Hallgatok (HallgatoID int PRIMARY KEY, Education VARCHAR(50), IndividualProject "
+                 "VARCHAR(50), age int "
+                 "UNSIGNED, Gender VARCHAR(10), City VARCHAR(50), Influenced VARCHAR(10), Perseverance VARCHAR(50),"
+                 "DesireToTakeInitiative int UNSIGNED, Competitiveness int UNSIGNED, SelfReliance int "
+                 "UNSIGNED, StrongNeedToAchieve int UNSIGNED, SelfConfidence int UNSIGNED,"
+                 "GoodPhysicalHealth int UNSIGNED, MentalDisorder int UNSIGNED, KeyTraits VARCHAR(50), "
+                 "ReasonsForLack VARCHAR(150), y int UNSIGNED )")
+
+with open('data.csv')as csv_file:
+    csvfile = csv.reader(csv_file, delimiter=',')
+    all_value = []
+    for row in csvfile:
+        value = (
+            row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12],
+            row[13], row[14], row[15], row[16])
+        all_value.append(value)
+
+query = "insert into 'Hallgatok' ('Education' ,'IndividualProject', 'age', 'Gender', 'City', " \
+        "'Influenced', 'Perseverance', " \
+        "'DesireToTakeInitiative', 'Competitiveness', 'SelfReliance', 'StrongNeedToAchieve', 'SelfConfidence', " \
+        "'GoodPhysicalHealth',  'MentalDisorder', 'KeyTraits', 'ReasonsForLack', 'y') values (%s, %s, %i, %s,%s," \
+        "%s,%i,%i,%i,%i," \
+        "%i,%i,%i,%s,%s,%s,%i) "
+
+mycursor.executemany(query, all_value)
+db.commit()
